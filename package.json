@@ -18,7 +18,9 @@
 		"astra",
 		"ad-astra",
 		"adastra",
-		"api"
+		"api",
+		"exchange()",
+		"ad astra"
 	],
 	"author": "Ken Mueller",
 	"license": "ISC",
