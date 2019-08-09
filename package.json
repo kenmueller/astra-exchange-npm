@@ -2,9 +2,9 @@
 	"name": "astra-exchange",
 	"version": "1.0.0",
 	"description": "Astra Exchange API tools",
-	"main": "index.js",
+	"main": "lib/index.js",
 	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1"
+		"build": "tsc"
 	},
 	"repository": {
 		"type": "git",
@@ -18,14 +18,17 @@
 		"astra",
 		"ad-astra",
 		"adastra",
-		"api",
-		"exchange()",
+		"astra exchange api",
+		"exchange",
 		"ad astra"
 	],
 	"author": "Ken Mueller",
-	"license": "ISC",
+	"license": "MIT",
 	"bugs": {
 		"url": "https://github.com/kenmueller/astra-exchange-npm/issues"
 	},
-	"homepage": "https://github.com/kenmueller/astra-exchange-npm#readme"
+	"homepage": "https://github.com/kenmueller/astra-exchange-npm#readme",
+	"dependencies": {
+		"typescript": "^3.5.3"
+	}
 }
