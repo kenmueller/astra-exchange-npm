@@ -3,6 +3,7 @@
 	"version": "1.0.0",
 	"description": "Astra Exchange API tools",
 	"main": "lib/index.js",
+	"types": "types/index.d.ts",
 	"scripts": {
 		"build": "tsc"
 	},
@@ -29,6 +30,7 @@
 	},
 	"homepage": "https://github.com/kenmueller/astra-exchange-npm#readme",
 	"dependencies": {
+		"tslint": "^5.18.0",
 		"typescript": "^3.5.3"
 	}
 }
