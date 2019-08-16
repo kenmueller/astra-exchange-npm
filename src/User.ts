@@ -1,3 +1,4 @@
+import { userWithId } from './index'
 import { checkPin } from './Helpers'
 
 export default class User {
@@ -17,5 +18,15 @@ export default class User {
 		this.reputation = reputation
 		this.pin = checkPin(pin) ? pin || undefined : undefined
 		this.hasPrivateData = this.pin !== undefined
+	}
+
+	reload(): Promise<User> {
+		return userWithId(this.id, this.pin).then(user => {
+			this.name = user.name
+			this.email = user.email
+			this.balance = user.balance
+			this.reputation = user.reputation
+			return this
+		})
 	}
 }
