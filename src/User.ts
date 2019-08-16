@@ -1,4 +1,5 @@
-import { userWithId } from './index'
+import { userWithId, transactions } from './index'
+import TransactionRecord from './TransactionRecord'
 import { checkPin } from './Helpers'
 
 export default class User {
@@ -18,6 +19,10 @@ export default class User {
 		this.reputation = reputation
 		this.pin = checkPin(pin) ? pin || undefined : undefined
 		this.hasPrivateData = this.pin !== undefined
+	}
+
+	transactions(): Promise<TransactionRecord[] | undefined> {
+		return this.pin ? transactions(this.id, this.pin) : Promise.resolve(undefined)
 	}
 
 	reload(): Promise<User> {
