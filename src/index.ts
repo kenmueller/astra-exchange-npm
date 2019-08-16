@@ -91,7 +91,7 @@ export function transactions(id: string, pin: string): Promise<TransactionRecord
 			switch (response.status) {
 			case 200:
 				return response.json().then(json =>
-					new TransactionRecord(json.from, json.to, json.amount, json.message, new Date(Date.parse(json.time))) // fix date
+					new TransactionRecord(json.from, json.to, json.amount, json.message, new Date(Date.parse(json.time)))
 				).catch(() =>
 					Promise.reject(new ExchangeError(500, 'Unknown error. Please try again'))
 				)
