@@ -4,7 +4,7 @@ import User from './User'
 import Transaction from './Transaction'
 import { checkPin, cloudFunctionUrl } from './Helpers'
 
-export { ExchangeError }
+export { ExchangeError, Transaction, TransactionRecord, User }
 
 export function users(): Promise<any> {
 	return fetch(cloudFunctionUrl('users')).then(response =>
