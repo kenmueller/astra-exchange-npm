@@ -1,6 +1,6 @@
-# **[Documentation](https://astra.exchange/documentation)**
+# **[Astra Exchange API Documentation](https://astra.exchange/documentation)**
 
-## **[View on NPM](https://www.npmjs.com/package/astra-exchange)**
+## **[View on npm](https://www.npmjs.com/package/astra-exchange)**
 
 ## Download
 
