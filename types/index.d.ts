@@ -45,7 +45,77 @@ export class ExchangeError {
 	toString(): string
 }
 
-// TODO: index.ts
+/**
+ * @returns A `Promise` containing an array of type `User[]`
+ * 
+ * **NOTE:** Each user only contains public data. If you want private data, you must get each user individually using `userWithId` or `userWithEmail`
+ * 
+ * Returns an `ExchangeError` if an error occurs
+ */
+export function users(): Promise<User[]>
+
+/**
+ * Sends a transaction
+ * 
+ * @param pin The user's pin. Of type `string` that must be 4 integers from 0-9
+ * @param from The UID of the user that's sending the transaction. Of type `string`
+ * @param to The UID of the user that's receiving the transaction. Of type `string`
+ * @param amount The transaction amount. Can be a decimal, cannot be negative or zero. Of type `number`
+ * @param message The transaction message. Of type `string`, but it can be `null`, `undefined`, or just left blank
+ * 
+ * @returns A `Promise` containing a `TransactionRecord`
+ * 
+ * Returns an `ExchangeError` if an error occurs
+ */
+export function transact(pin: string, from: string, to: string, amount: number, message?: string | null): Promise<TransactionRecord>
+
+/**
+ * Sends a transaction from a `Transaction` object with a `pin`
+ * 
+ * @param transaction The `Transaction` object that will be sent
+ * @param pin The user's pin. Of type `string` that must be 4 integers from 0-9
+ * 
+ * @returns A `Promise` containing a `TransactionRecord`
+ * 
+ * Returns an `ExchangeError` if an error occurs
+ */
+export function transactFromTransaction(transaction: Transaction, pin: string): Promise<TransactionRecord>
+
+/**
+ * Retrieves a `User` with an ID and a `pin` (optional)
+ * 
+ * If the pin is `null`, `undefined`, or left blank, the function only returns public data. If the pin is correct, private data is included as well
+ * 
+ * @param id The user's UID. Of type `string`
+ * @param pin The user's pin. Of type `string` that must be 4 integers from 0-9, `null`, or `undefined`
+ * 
+ * Returns an `ExchangeError` if an error occurs
+ */
+export function userWithId(id: string, pin?: string | null): Promise<User>
+
+/**
+ * Retrieves a `User` with an `email` and a `pin` (optional)
+ * 
+ * If the pin is `null`, `undefined`, or left blank, the function only returns public data. If the pin is correct, private data is included as well
+ * 
+ * @param email The user's email. Of type `string`
+ * @param pin The user's pin. Of type `string` that must be 4 integers from 0-9, `null`, or `undefined`
+ * 
+ * Returns an `ExchangeError` if an error occurs
+ */
+export function userWithEmail(email: string, pin?: string | null): Promise<User>
+
+/**
+ * Retrieves all the transactions that a user has ever made
+ * 
+ * @param id The user's UID. Of type `string`
+ * @param pin The user's pin. Of type `string` that must be 4 integers from 0-9
+ * 
+ * @returns A `Promise` containing an array of type `TransactionRecord[]`
+ * 
+ * Returns an `ExchangeError` if an error occurs
+ */
+export function transactions(id: string, pin: string): Promise<TransactionRecord[]>
 
 /**
  * A `Transaction` that can be used to send transactions and reuse them
@@ -82,11 +152,12 @@ export class Transaction {
 	/**
 	 * Sends the transaction to the recipient
 	 * 
+	 * @param pin A pin of type `string` that must be 4 integers from 0-9
+	 * 
 	 * @returns A new `TransactionRecord`
 	 * 
-	 * @param pin A pin of type `string` that must be 4 characters from 0-9
+	 * Returns an `ExchangeError` if an error occurs
 	 */
-
 	send(pin: string): Promise<TransactionRecord>
 }
 
@@ -191,6 +262,17 @@ export class User {
 	hasPrivateData: boolean
 
 	/**
+	 * Retrieves all the transactions that this user has ever made
+	 * 
+	 * This function is the same as calling `exchange.transactions` with the user's `id` and `pin`
+	 * 
+	 * @returns If `pin` is `undefined`, then a `Promise` containing `undefined`. Otherwise, a `Promise` constaining an array of type `TransactionRecord[]`
+	 * 
+	 * Returns an `ExchangeError` if an error occurs
+	 */
+	transactions(): Promise<TransactionRecord[] | undefined>
+
+	/**
 	 * **Mutating function**
 	 * 
 	 * Reloads the user from the database, modifying the current `User` and returning itself as a promise
@@ -198,6 +280,8 @@ export class User {
 	 * @returns A `Promise` containing itself, but updated.
 	 * 
 	 * If the user changed their authentication info, like their `pin`, this function returns a `Promise.reject` of type `ExchangeError`
+	 * 
+	 * Returns an `ExchangeError` if an error occurs
 	 */
 	reload(): Promise<User>
 }
