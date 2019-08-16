@@ -7,7 +7,7 @@ export default class ExchangeError {
 		this.message = message
 	}
 
-	fromJSON(json: any): ExchangeError | undefined {
+	static fromJSON(json: any): ExchangeError | undefined {
 		if (typeof json !== 'object')
 			return undefined
 		const status = json.status
@@ -17,7 +17,15 @@ export default class ExchangeError {
 			: new ExchangeError(status, message)
 	}
 
+	static fromString(string: string): ExchangeError | undefined {
+		return ExchangeError.fromJSON(JSON.stringify(string))
+	}
+
 	toJSON(): { status: number, message: string } {
 		return { status: this.status, message: this.message }
+	}
+
+	toString(): string {
+		return JSON.stringify(this.toJSON())
 	}
 }

@@ -1,11 +1,13 @@
 import ExchangeError from './ExchangeError'
 import TransactionRecord from './TransactionRecord'
 import User from './User'
+import Transaction from './Transaction'
+import { checkPin, cloudFunctionUrl } from './Helpers'
 
 export { ExchangeError }
 
 export function users(): Promise<any> {
-	return fetch('https://cors-anywhere.herokuapp.com/https://us-central1-astra-exchange.cloudfunctions.net/users').then(response =>
+	return fetch(cloudFunctionUrl('users')).then(response =>
 		response.json().catch(() =>
 			Promise.reject(new ExchangeError(500, 'Unknown error. Please try again'))
 		)
@@ -13,8 +15,8 @@ export function users(): Promise<any> {
 }
 
 export function transact(pin: string, from: string, to: string, amount: number, message?: string | null): Promise<TransactionRecord> {
-	return pin.length === 4
-		? fetch(`https://cors-anywhere.herokuapp.com/https://us-central1-astra-exchange.cloudfunctions.net/transact?pin=${pin}&from=${from}&to=${to}&amount=${amount}${message ? `&message=${message}` : ''}`).then(response => {
+	return checkPin(pin)
+		? fetch(cloudFunctionUrl(`transact?pin=${pin}&from=${from}&to=${to}&amount=${amount}${message ? `&message=${message}` : ''}`)).then(response => {
 			switch (response.status) {
 			case 200:
 				return Promise.resolve(new TransactionRecord(from, to, amount, message || '', new Date))
@@ -30,13 +32,17 @@ export function transact(pin: string, from: string, to: string, amount: number, 
 				return Promise.reject(new ExchangeError(500, 'Unknown error. Please try again'))
 			}
 		})
-		: Promise.reject(new ExchangeError(400, '\'pin\' must be 4 characters long'))
+		: Promise.reject(new ExchangeError(400, '\'pin\' must be 4 characters long and be composed of only integers'))
+}
+
+export function transactFromTransaction(transaction: Transaction, pin: string): Promise<TransactionRecord> {
+	return transact(pin, transaction.from, transaction.to, transaction.amount, transaction.message)
 }
 
 export function userWithId(id: string, pin?: string | null): Promise<User> {
-	return pin && pin.length !== 4
-		? Promise.reject(new ExchangeError(400, '\'pin\' must be 4 characters long'))
-		: fetch(`https://cors-anywhere.herokuapp.com/https://us-central1-astra-exchange.cloudfunctions.net/user?id=${id}${pin ? `&pin=${pin}` : ''}`).then(response => {
+	return pin && !checkPin(pin)
+		? Promise.reject(new ExchangeError(400, '\'pin\' must be 4 characters long and be composed of only integers'))
+		: fetch(cloudFunctionUrl(`user?id=${id}${pin ? `&pin=${pin}` : ''}`)).then(response => {
 			switch (response.status) {
 			case 200:
 				return response.json().then(json =>
@@ -57,9 +63,9 @@ export function userWithId(id: string, pin?: string | null): Promise<User> {
 }
 
 export function userWithEmail(email: string, pin?: string | null): Promise<User> {
-	return pin && pin.length !== 4
-		? Promise.reject(new ExchangeError(400, '\'pin\' must be 4 characters long'))
-		: fetch(`https://cors-anywhere.herokuapp.com/https://us-central1-astra-exchange.cloudfunctions.net/user?email=${email}${pin ? `&pin=${pin}` : ''}`).then(response => {
+	return pin && !checkPin(pin)
+		? Promise.reject(new ExchangeError(400, '\'pin\' must be 4 characters long and be composed of only integers'))
+		: fetch(cloudFunctionUrl(`user?email=${email}${pin ? `&pin=${pin}` : ''}`)).then(response => {
 			switch (response.status) {
 			case 200:
 				return response.json().then(json =>
@@ -80,12 +86,12 @@ export function userWithEmail(email: string, pin?: string | null): Promise<User>
 }
 
 export function transactions(id: string, pin: string): Promise<TransactionRecord> {
-	return pin.length === 4
-		? fetch(`https://cors-anywhere.herokuapp.com/https://us-central1-astra-exchange.cloudfunctions.net/transactions?id=${id}&pin=${pin}`).then(response => {
+	return checkPin(pin)
+		? fetch(cloudFunctionUrl(`transactions?id=${id}&pin=${pin}`)).then(response => {
 			switch (response.status) {
 			case 200:
 				return response.json().then(json =>
-					new TransactionRecord(json.from, json.to, json.amount, json.message, new Date) // fix date
+					new TransactionRecord(json.from, json.to, json.amount, json.message, new Date(Date.parse(json.time))) // fix date
 				).catch(() =>
 					Promise.reject(new ExchangeError(500, 'Unknown error. Please try again'))
 				)
@@ -99,5 +105,5 @@ export function transactions(id: string, pin: string): Promise<TransactionRecord
 				return Promise.reject(new ExchangeError(500, 'Unknown error. Please try again'))
 			}
 		})
-		: Promise.reject(new ExchangeError(400, '\'pin\' must be 4 characters long'))
+		: Promise.reject(new ExchangeError(400, '\'pin\' must be 4 characters long and be composed of only integers'))
 }

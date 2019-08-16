@@ -1,13 +1,13 @@
-import { transact } from './index'
+import { transactFromTransaction } from './index'
 import TransactionRecord from './TransactionRecord'
 
 export default class Transaction {
 	from: string
 	to: string
 	amount: number
-	message: string | null | undefined
+	message?: string | null
 
-	constructor(from: string, to: string, amount: number, message?: string | null | undefined) {
+	constructor(from: string, to: string, amount: number, message?: string | null) {
 		this.from = from
 		this.to = to
 		this.amount = amount
@@ -15,6 +15,6 @@ export default class Transaction {
 	}
 
 	send(pin: string): Promise<TransactionRecord> {
-		return transact(pin, this.from, this.to, this.amount, this.message)
+		return transactFromTransaction(this, pin)
 	}
 }
