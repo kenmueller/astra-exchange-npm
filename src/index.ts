@@ -85,13 +85,15 @@ export function userWithEmail(email: string, pin?: string | null): Promise<User>
 		})
 }
 
-export function transactions(id: string, pin: string): Promise<TransactionRecord> {
+export function transactions(id: string, pin: string): Promise<TransactionRecord[]> {
 	return checkPin(pin)
 		? fetch(cloudFunctionUrl(`transactions?id=${id}&pin=${pin}`)).then(response => {
 			switch (response.status) {
 			case 200:
-				return response.json().then(json =>
-					new TransactionRecord(json.from, json.to, json.amount, json.message, new Date(Date.parse(json.time)))
+				return response.json().then((objects: any[]) =>
+					objects.map(json =>
+						new TransactionRecord(json.from, json.to, json.amount, json.message, new Date(Date.parse(json.time)))
+					)
 				).catch(() =>
 					Promise.reject(new ExchangeError(500, 'Unknown error. Please try again'))
 				)
