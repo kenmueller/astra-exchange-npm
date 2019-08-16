@@ -6,9 +6,13 @@ import { checkPin, cloudFunctionUrl } from './Helpers'
 
 export { ExchangeError, Transaction, TransactionRecord, User }
 
-export function users(): Promise<any> {
+export function users(): Promise<User[]> {
 	return fetch(cloudFunctionUrl('users')).then(response =>
-		response.json().catch(() =>
+		response.json().then((objects: any[]) =>
+			objects.map(json =>
+				new User(json.id, json.name, json.email, json.balance, json.reputation, json.pin)
+			)
+		).catch(() =>
 			Promise.reject(new ExchangeError(500, 'Unknown error. Please try again'))
 		)
 	)
