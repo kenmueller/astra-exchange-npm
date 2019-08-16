@@ -1,6 +1,6 @@
 {
 	"name": "astra-exchange",
-	"version": "1.0.0",
+	"version": "1.1.0",
 	"description": "Astra Exchange API tools",
 	"main": "lib/index.js",
 	"types": "types/index.d.ts",
