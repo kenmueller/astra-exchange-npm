@@ -4,7 +4,7 @@ export default class TransactionRecord {
 	amount: number
 	message: string
 	time: Date
-
+	
 	constructor(from: string, to: string, amount: number, message: string, time: Date) {
 		this.from = from
 		this.to = to

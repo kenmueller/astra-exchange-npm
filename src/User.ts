@@ -1,4 +1,4 @@
-import { userWithId, transactions } from './index'
+import { userWithId, transactions } from '.'
 import TransactionRecord from './TransactionRecord'
 import { checkPin } from './Helpers'
 
@@ -10,7 +10,7 @@ export default class User {
 	reputation: number
 	pin?: string
 	hasPrivateData: boolean
-
+	
 	constructor(id: string, name: string, email: string, balance: number, reputation: number, pin?: string | null) {
 		this.id = id
 		this.name = name
@@ -21,17 +21,15 @@ export default class User {
 		this.hasPrivateData = this.pin !== undefined
 	}
 
-	transactions(): Promise<TransactionRecord[] | undefined> {
-		return this.pin ? transactions(this.id, this.pin) : Promise.resolve(undefined)
-	}
+	transactions = (): Promise<TransactionRecord[] | undefined> =>
+		this.pin ? transactions(this.id, this.pin) : Promise.resolve(undefined)
 
-	reload(): Promise<User> {
-		return userWithId(this.id, this.pin).then(user => {
+	reload = (): Promise<User> =>
+		userWithId(this.id, this.pin).then(user => {
 			this.name = user.name
 			this.email = user.email
 			this.balance = user.balance
 			this.reputation = user.reputation
 			return this
 		})
-	}
 }
